@@ -1,0 +1,38 @@
+version: "3.8"
+
+services:
+  frontend:
+    build: ./ml-kurkkumopo-frontend
+    image: ml-frontend
+    ports:
+      - 3000:3000
+    container_name: ml_frontend
+    networks:
+      - ml-network
+
+  backend:
+    build: ./ml-kurkkumopo-backend
+    image: ml-backend
+    ports:
+      - 5000:5000
+    depends_on:
+      - training
+    container_name: ml_backend
+    volumes:
+      - /tmp/ml-model:/src/model
+    networks:
+      - ml-network
+
+  training:
+    build: ./ml-kurkkumopo-training
+    image: ml-training
+    container_name: ml_training
+    volumes:
+      - /tmp/ml-model:/src/model
+      - /tmp/ml-imgs:/src/imgs
+    networks:
+      - ml-network
+
+networks:
+  ml-network:
+    name: ml-network
