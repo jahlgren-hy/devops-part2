@@ -1,0 +1,31 @@
+version: "3"
+
+services:
+  redis:
+    image: redis:alpine
+
+  db:
+    image: postgres:alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: redmine
+      POSTGRES_PASSWORD: salasana
+    container_name: db_redmine
+
+  backend:
+    image: hulluukko/backend
+    ports:
+      - 8000:8000
+    environment:
+      - DB_USERNAME=jukkahl
+      - DB_PASSWORD=salasana
+      - DB_NAME=redmine
+      - DB_HOST=db
+      - REDIS=redis
+    depends_on:
+      - db
+
+  frontend:
+    image: hulluukko/frontend
+    ports:
+      - 5000:5000
